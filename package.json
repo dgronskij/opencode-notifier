@@ -1,0 +1,11 @@
+{
+  "name": "opencode-notifier",
+  "version": "1.0.0",
+  "description": "Run custom shell commands on OpenCode events",
+  "main": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "@opencode-ai/plugin": "*",
+    "@opencode-ai/sdk": "*"
+  }
+}
