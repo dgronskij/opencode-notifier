@@ -62,11 +62,11 @@ Each command is invoked via `sh -c` and receives these environment variables:
 
 | Variable | Present on | Description |
 |---|---|---|
-| `OPENCODE_EVENT` | all | Event type string |
-| `OPENCODE_SESSION_ID` | `idle`, `error` | Session ID |
-| `OPENCODE_SESSION_TITLE` | `idle` | Session title |
-| `OPENCODE_ERROR` | `error` | Error message |
-| `OPENCODE_PERMISSION_ID` | `permission` | Permission request ID |
+| `OPENCODE_NOTIFIER_EVENT` | all | Event type string |
+| `OPENCODE_NOTIFIER_SESSION_ID` | `idle`, `error` | Session ID |
+| `OPENCODE_NOTIFIER_SESSION_TITLE` | `idle` | Session title |
+| `OPENCODE_NOTIFIER_ERROR` | `error` | Error message |
+| `OPENCODE_NOTIFIER_PERMISSION_ID` | `permission` | Permission request ID |
 
 Your existing `PATH` and environment are inherited, so commands work as if run from your shell.
 
@@ -76,8 +76,8 @@ Your existing `PATH` and environment are inherited, so commands work as if run f
 #!/usr/bin/env bash
 # ~/.scripts/on-idle.sh
 
-notify-send "OpenCode" "Task done: $OPENCODE_SESSION_TITLE"
-# or: curl -s "https://ntfy.sh/mytopic" -d "$OPENCODE_SESSION_TITLE"
+notify-send "OpenCode" "Task done: $OPENCODE_NOTIFIER_SESSION_TITLE"
+# or: curl -s "https://ntfy.sh/mytopic" -d "$OPENCODE_NOTIFIER_SESSION_TITLE"
 # or: tmux display-message "opencode idle"
 ```
 

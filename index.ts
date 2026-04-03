@@ -12,11 +12,11 @@
  *
  * Commands are spawned fire-and-forget via Bun.spawn().
  * Event data is passed as environment variables:
- *   OPENCODE_EVENT          - event type string
- *   OPENCODE_SESSION_ID     - session ID (session events)
- *   OPENCODE_SESSION_TITLE  - session title (idle only)
- *   OPENCODE_ERROR          - error message (error only)
- *   OPENCODE_PERMISSION_ID  - permission request ID (permission only)
+ *   OPENCODE_NOTIFIER_EVENT          - event type string
+ *   OPENCODE_NOTIFIER_SESSION_ID     - session ID (session events)
+ *   OPENCODE_NOTIFIER_SESSION_TITLE  - session title (idle only)
+ *   OPENCODE_NOTIFIER_ERROR          - error message (error only)
+ *   OPENCODE_NOTIFIER_PERMISSION_ID  - permission request ID (permission only)
  */
 
 import * as fs from "node:fs/promises"
@@ -218,9 +218,9 @@ async function handleIdle(
 	} catch {}
 
 	spawnCommand(cmd, {
-		OPENCODE_EVENT: "session.idle",
-		OPENCODE_SESSION_ID: sessionID,
-		OPENCODE_SESSION_TITLE: title,
+		OPENCODE_NOTIFIER_EVENT: "session.idle",
+		OPENCODE_NOTIFIER_SESSION_ID: sessionID,
+		OPENCODE_NOTIFIER_SESSION_TITLE: title,
 	})
 }
 
@@ -236,9 +236,9 @@ async function handleError(
 	if (!config.notifyChildSessions && !(await isParentSession(client, sessionID))) return
 
 	spawnCommand(cmd, {
-		OPENCODE_EVENT: "session.error",
-		OPENCODE_SESSION_ID: sessionID,
-		OPENCODE_ERROR: error ?? "",
+		OPENCODE_NOTIFIER_EVENT: "session.error",
+		OPENCODE_NOTIFIER_SESSION_ID: sessionID,
+		OPENCODE_NOTIFIER_ERROR: error ?? "",
 	})
 }
 
@@ -247,8 +247,8 @@ async function handlePermission(config: HookConfig, permissionID: string): Promi
 	if (!cmd || isQuietHours(config)) return
 
 	spawnCommand(cmd, {
-		OPENCODE_EVENT: "permission.asked",
-		OPENCODE_PERMISSION_ID: permissionID,
+		OPENCODE_NOTIFIER_EVENT: "permission.asked",
+		OPENCODE_NOTIFIER_PERMISSION_ID: permissionID,
 	})
 }
 
@@ -256,7 +256,7 @@ async function handleQuestion(config: HookConfig): Promise<void> {
 	const cmd = config.commands.question
 	if (!cmd || isQuietHours(config)) return
 
-	spawnCommand(cmd, { OPENCODE_EVENT: "question.asked" })
+	spawnCommand(cmd, { OPENCODE_NOTIFIER_EVENT: "question.asked" })
 }
 
 // ==========================================
