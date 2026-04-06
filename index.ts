@@ -34,12 +34,15 @@ type OpencodeClient = ReturnType<typeof createOpencodeClient>
 interface HookConfig {
 	/** Also run commands for child/sub-sessions (default: false) */
 	notifyChildSessions: boolean
-	/** Shell commands to run per event. Omit a key to skip that event. */
+	/** Commands to run per event. Omit a key to skip that event.
+	 *  string   → run via `sh -c` (shell features like pipes/globs available)
+	 *  string[] → exec directly, no shell (args are literal, ~/  expanded on argv[0])
+	 */
 	commands: {
-		idle?: string
-		error?: string
-		permission?: string
-		question?: string
+		idle?: string | string[]
+		error?: string | string[]
+		permission?: string | string[]
+		question?: string | string[]
 	}
 	/** Suppress all hooks during these hours */
 	quietHours: {
@@ -166,14 +169,18 @@ async function isParentSession(client: OpencodeClient, sessionID: string): Promi
 // COMMAND RUNNER
 // ==========================================
 
-function spawnCommand(cmd: string, extraEnv: Record<string, string>): void {
+function spawnCommand(cmd: string | string[], extraEnv: Record<string, string>): void {
 	const fullEnv: Record<string, string> = {}
 	for (const [k, v] of Object.entries(process.env)) {
 		if (v !== undefined) fullEnv[k] = v
 	}
 	Object.assign(fullEnv, extraEnv)
 
-	Bun.spawn(["sh", "-c", expandHome(cmd)], {
+	const argv: string[] = Array.isArray(cmd)
+		? [expandHome(cmd[0]), ...cmd.slice(1)]
+		: ["sh", "-c", expandHome(cmd)]
+
+	Bun.spawn(argv, {
 		env: fullEnv,
 		stdout: "ignore",
 		stderr: "ignore",
